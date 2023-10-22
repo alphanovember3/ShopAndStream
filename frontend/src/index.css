@@ -1,0 +1,25 @@
+.App{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero_grad{
+  background-image: linear-gradient(
+  45deg,
+  hsl(189deg 75% 60%) 0%,
+  hsl(183deg 74% 51%) 11%,
+  hsl(177deg 100% 43%) 22%,
+  hsl(169deg 79% 49%) 33%,
+  hsl(156deg 75% 59%) 44%,
+  hsl(134deg 71% 66%) 56%,
+  hsl(102deg 71% 66%) 67%,
+  hsl(79deg 73% 59%) 78%,
+  hsl(62deg 73% 52%) 89%,
+  hsl(50deg 100% 50%) 100%
+);
+}
+
+.img{
+  width: 100%; 
+}
