@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 
 import { Box , Typography, Grid , Container, Button, useMediaQuery } from '@mui/material';
@@ -5,7 +6,8 @@ import RelatedProducts from '../components/Products/RelatedProducts';
 import products from '../data/products';
 import { useParams } from 'react-router-dom';
 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { addToCart } from '../slices/cart/cartSlice';
 import { useNavigate } from 'react-router-dom';
 
 function ProductDetails() {
@@ -20,7 +22,7 @@ function ProductDetails() {
   const { userInfo } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
 
   useEffect(() => {
     async function fetchData(){
@@ -38,6 +40,7 @@ function ProductDetails() {
 
   const checkUser = async() => {
     if(userInfo){
+      dispatch(addToCart({ id : pdata.id , name : pdata.name , image : pdata.image , price : pdata.price, quantity : count}))
       navigate('/cart')
     } else {
       navigate('/login')
@@ -70,7 +73,12 @@ function ProductDetails() {
               Add to Cart
             </Button>
             <br />
-            <Button variant='contained' onClick={() => setCount(count + 1)}>+</Button>
+            <Button 
+              variant='contained' 
+              onClick={() => setCount(count + 1)}
+            >
+              +
+            </Button>
               <span style={{ margin : 10}}>{count}</span>
             <Button variant='contained'onClick={() => {if(count !== 1)setCount(count - 1)} } >-</Button>
           </Box>

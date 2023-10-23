@@ -13,9 +13,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-
+import { Badge } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
-import CallIcon from '@mui/icons-material/Call';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link } from 'react-router-dom';
 
@@ -35,6 +34,7 @@ function Header(props) {
   };
 
   const { userInfo } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart)
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -113,9 +113,24 @@ function Header(props) {
             {/* <IconButton color='secondary' >
               <CallIcon />
             </IconButton> */}
-            <IconButton variant='contained' sx={{ mx : 0.5}} starticon={<PersonIcon />}>
-              <ShoppingCartIcon  sx={{ color : 'black'}}/>
-            </IconButton>
+            <Badge
+              badgeContent={cart.length}
+              color='secondary'
+              invisible = { cart.length === 0}
+              sx={{
+                  "& .MuiBadge-badge" : {
+                      right : 5,
+                      top : 5,
+                      padding : "0 , 4px",
+                      height : "14px",
+                      minWidth : "13px"
+                  }
+              }}
+            >  
+              <IconButton variant='contained' sx={{ mx : 0.5}} onClick={() => { navigate('/cart')}}>
+                <ShoppingCartIcon  sx={{ color : 'black'}}/>
+              </IconButton>
+            </Badge>
           </Box>
         </Toolbar>
       </AppBar>

@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -8,17 +8,19 @@ import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
-import { useSelector } from 'react-redux';
+import { useSelector ,  useDispatch } from 'react-redux';
+import { addToCart } from '../../slices/cart/cartSlice';
 import { useNavigate } from 'react-router-dom';
 
 function ProductsCard({ id , name , image , price, category }) {
 
   const { userInfo } = useSelector((state) => state.auth);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const checkUser = async() => {
     if(userInfo){
+      dispatch(addToCart({ id : id , name , image , price , quantity : 1}))
       navigate('/cart')
     } else {
       navigate('/login')
