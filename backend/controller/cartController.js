@@ -32,13 +32,15 @@ const addCart = expressAsyncHandler(async(req,res) => {
       // If the product exists, update the quantity
       existingItem.quantity += quantity;
     }else{
+      // if product is not present
+      // add new product to cart
       userCart.items.push({
         productId, quantity , name, price , image
       });
     }
     await userCart.save();
     
-    res.status(200).json("Array added")
+    return res.status(200).json("Array added")
   }else{
     //If the user doesn't have a cart yet, create a new cart
     await Cart.create({ 
@@ -53,18 +55,44 @@ const addCart = expressAsyncHandler(async(req,res) => {
         }
       ] 
     });
+    return res.status(200).json("NEW CART CREATED")
   }
-  
+});
 
-  res.status(200).json('added');
 
-})
 
 /**
  * @description Update Cart items (number of items)
  * @route PUT /api/cart/update/:cartItemid
  * @access private
- */
+*/
+const removeCartItem = expressAsyncHandler(async(req,res) => {
+  const productId = req.params.id;
+  
+  const userCart = await Cart.findOne({ user : req.user._id});
+
+  if(userCart){
+    
+    // Check if the product already exists in the cart
+    const existingItem = userCart.items.find((item) => item.productId === productId);
+
+    if(existingItem){
+      // If the product exists, update the quantity
+      existingItem.quantity -= 1;
+    }else{
+      // if product is not present
+      return res.status(404).json("No item")
+    }
+    await userCart.save();
+    
+    return res.status(200).json("Array added")
+  }else{
+    
+    return res.status(200).json("NO CART")
+  }
+  
+})
+
 
 /**
  * @description Delete Cart item
@@ -75,4 +103,5 @@ const addCart = expressAsyncHandler(async(req,res) => {
 export {
   addCart,
   getCart,
+  removeCartItem
 }

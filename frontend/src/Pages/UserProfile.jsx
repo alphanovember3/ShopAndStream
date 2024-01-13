@@ -31,9 +31,10 @@ function UserProfile() {
       try {
         const res = await reward();
         dispatch(setReward(res.data.reward[0].reward));
-        // console.log(res)
+        console.log(res)
       } catch (error) {
         navigate('/');
+        console.log(error);
       }
     }
     fetchUserProfile();

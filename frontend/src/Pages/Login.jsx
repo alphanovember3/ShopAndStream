@@ -104,7 +104,7 @@ function Login() {
 
       <Box sx={{ display : 'flex' , justifyContent : 'center'}} mt={2}>
         <Typography sx={{ mr : 1}}>Don't have account?</Typography>
-        <Link href='/register'>Sign In</Link>
+        <Link href='/register'>Sign Up</Link>
       </Box>
 
       </Box>

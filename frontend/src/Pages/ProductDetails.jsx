@@ -1,9 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Box , Typography, Grid , Container, Button, useMediaQuery } from '@mui/material';
-import RelatedProducts from '../components/Products/RelatedProducts';
-import products from '../data/products';
+import { Box , Typography, Grid , Container, Button, useMediaQuery, IconButton } from '@mui/material';
+// import RelatedProducts from '../components/Products/RelatedProducts';
+import ProductsCard from '../components/Products/ProductsCard'
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+// import products from '../data/products';
 import { useParams } from 'react-router-dom';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -18,6 +21,7 @@ function ProductDetails() {
 
   const [ count , setCount ] = useState(1);
   const [pdata , setPdata] = useState([]);
+  const [ relatedata , setRelatedata] = useState([]);
 
   const { userInfo } = useSelector((state) => state.auth);
 
@@ -35,20 +39,29 @@ function ProductDetails() {
         alert('unable to fetch data');
       }
     }
+    async function fetchData_all(){
+      try {
+        const res = await fetch('http://localhost:3004/products');
+        const data = await res.json();
+        console.log(data);
+        setRelatedata(data);
+      } catch (error) {
+        alert('unable to fetch data');
+      }
+    }
     fetchData();
-  },[])
+    fetchData_all();
+  },[id])
 
   const checkUser = async() => {
     if(userInfo){
       dispatch(addToCart({ id : pdata.id , name : pdata.name , image : pdata.image , price : pdata.price, quantity : count}))
-      navigate('/cart')
+      // navigate('/cart')
     } else {
       navigate('/login')
     }
   }
 
-  
-  // const product_details = pdata.find(product_details => product_details.id === id);
 
   return (
     <Box my={10}>
@@ -73,19 +86,44 @@ function ProductDetails() {
               Add to Cart
             </Button>
             <br />
-            <Button 
+            <IconButton 
               variant='contained' 
               onClick={() => setCount(count + 1)}
             >
-              +
-            </Button>
+              <AddIcon />
+            </IconButton>
               <span style={{ margin : 10}}>{count}</span>
-            <Button variant='contained'onClick={() => {if(count !== 1)setCount(count - 1)} } >-</Button>
+            <IconButton variant='contained'onClick={() => {if(count !== 1)setCount(count - 1)} } ><RemoveIcon /></IconButton>
           </Box>
         </Grid>
       </Grid>
 
-      <RelatedProducts category={pdata.category} />
+      {/* <RelatedProducts category={pdata.category} /> */}
+
+      {/* // Related Products */}
+      <Box mt={5}>
+      <Typography variant='h4'>Related Products</Typography>
+      <Box>
+        <Grid container>
+          {relatedata.map((item) => {
+            if(item.category === pdata.category && item.id !== pdata.id){
+              return(
+                <Grid item xs={12} sm={4} md={4} key={item.id}>
+                  <ProductsCard 
+                    id={item.id} 
+                    name={item.name} 
+                    image={item.image} 
+                    price={item.price} 
+                    category={item.category}
+                  />
+                </Grid>
+              );
+            }
+          })}
+        </Grid>
+      </Box>
+    </Box>
+
 
 
     </Container>  

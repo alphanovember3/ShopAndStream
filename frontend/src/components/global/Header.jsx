@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useLogoutMutation } from "../../slices/auth/userApiSlice";
+import { deleteCart  } from '../../slices/cart/cartSlice';
 import { logout } from "../../slices/auth/authSlice";
 import { useNavigate } from 'react-router-dom';
 
@@ -45,6 +46,7 @@ function Header(props) {
     try{
       await logoutApiCall().unwrap();
       dispatch(logout());
+      dispatch(deleteCart());
       navigate('/login')
     }catch(err){
       console.log(err);
@@ -101,6 +103,24 @@ function Header(props) {
                 <>
                   <Button sx={{ color : 'black'}} onClick={visitProfile}>{userInfo.name}</Button>
                   <Button variant='contained' onClick={logoutHandler} color='error'>Logout</Button>
+                  <Badge
+                    badgeContent={cart.length}
+                    color='secondary'
+                    invisible = { cart.length === 0}
+                    sx={{
+                        "& .MuiBadge-badge" : {
+                            right : 5,
+                            top : 5,
+                            padding : "0 , 4px",
+                            height : "14px",
+                            minWidth : "13px"
+                        }
+                    }}
+                  >  
+                    <IconButton variant='contained' sx={{ mx : 0.5}} onClick={() => { navigate('/cart')}}>
+                      <ShoppingCartIcon  sx={{ color : 'black'}}/>
+                    </IconButton>
+                  </Badge>
                 </>
                 
               ) : (
@@ -113,24 +133,7 @@ function Header(props) {
             {/* <IconButton color='secondary' >
               <CallIcon />
             </IconButton> */}
-            <Badge
-              badgeContent={cart.length}
-              color='secondary'
-              invisible = { cart.length === 0}
-              sx={{
-                  "& .MuiBadge-badge" : {
-                      right : 5,
-                      top : 5,
-                      padding : "0 , 4px",
-                      height : "14px",
-                      minWidth : "13px"
-                  }
-              }}
-            >  
-              <IconButton variant='contained' sx={{ mx : 0.5}} onClick={() => { navigate('/cart')}}>
-                <ShoppingCartIcon  sx={{ color : 'black'}}/>
-              </IconButton>
-            </Badge>
+            
           </Box>
         </Toolbar>
       </AppBar>

@@ -12,6 +12,7 @@ import { useSelector , useDispatch } from 'react-redux';
 import { increaseCount , decreaseCount , removeFromCart  } from '../slices/cart/cartSlice';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { Link } from 'react-router-dom'
 
 function Cart() {
   
@@ -34,68 +35,73 @@ function Cart() {
           <Grid item xs={12} sm={12} md={8}>
             <Box mt={2}>
               {
-                cart.map((item) => (
-                <Box 
-                  key={item.id} 
-                  sx={{ 
-                    display : 'flex' , 
-                    justifyContent : 'space-between' , 
-                    backgroundColor : '#e0e0e0',
-                    borderRadius : '15px'
-                  }}
-                  width='900px'
-                  p={3}
-                  my={1}
-                  ml={20}
-                >
-
-                <Box >
-                  <img 
-                    src={item.image} 
-                    alt="prod"
-                    style={{ width: 100, height: 100 }}
-                  />
-                </Box>
-                <Box>
-                  <Typography variant='h6' >{item.name}</Typography>
-                </Box>
-
-                <Box>
-                  <Typography variant='body1'>for each</Typography>
-                  <Typography variant='body1'>${item.price}</Typography>
-                </Box>
-
-                {/* <Box>
-                  <Typography variant='body1'>Quantity : {item.quantity}</Typography>
-                </Box> */}
-
-                <Box>
-                  {/* <Typography>Quantity</Typography> */}
-                  <IconButton 
-                    variant='contained' 
-                    onClick={() => dispatch(increaseCount({ id : item.id}))}
-                    size='small'
-                  >
-                    <AddIcon />
-                  </IconButton>
-                    <span style={{ margin : 10 , color : 'red'}}>{item.quantity}</span>
-                  <IconButton 
-                    variant='contained'
-                    onClick={() => {dispatch(decreaseCount({id : item.id})) } } 
-                    size='small'
-                  >
-                    <RemoveIcon />
-                  </IconButton>
-                </Box>
-
-                <Box>
-                  <IconButton onClick={() => { dispatch(removeFromCart({ id : item.id}))}}>
-                    <DeleteIcon sx={{ color : 'black'}}/>
-                  </IconButton>
-                </Box>
+                cart.length === 0 ? (
+                  <div className='my-10 mx-20'>
+                    <h1 className='text-3xl text-yellow-400'>No Items in Cart!</h1>
+                    <Link to={"/"}>
+                      <button 
+                        className=' my-3 btn bg-yellow-400 text-black hover:bg-yellow-300 border-yellow-400'
+                      >
+                        Shop Now
+                      </button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto mx-20 px-10">
+                    <table className="table">
+                      {/* head */}
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th className='font-bold'>Name</th>
+                          <th className='font-bold'>price</th>
+                          <th className='font-bold'>Quantity</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {
+                        cart.map((item) => (
+                          <tr key={item.id}>
+                            <td><img src={item.image} alt="imgwq" className='w-40'/></td>
+                            <td><h1>{item.name}</h1></td>
+                            <td><h1>{item.price}</h1></td>
+                            <td>
+                              <IconButton 
+                                variant='contained' 
+                                onClick={() => dispatch(increaseCount({ id : item.id}))}
+                                size='small'
+                              >
+                                <AddIcon />
+                              </IconButton>
+                              <span style={{ margin : 10 , color : 'red'}}>{item.quantity}</span>
+                              <IconButton 
+                                variant='contained'
+                                onClick={() => {dispatch(decreaseCount({id : item.id})) } } 
+                                size='small'
+                              >
+                                <RemoveIcon />
+                              </IconButton>
+                            </td>
+                            <td>
+                            <IconButton onClick={() => { dispatch(removeFromCart({ id : item.id}))}}>
+                              <DeleteIcon sx={{ color : 'black'}}/>
+                            </IconButton>
+                            </td>
+                          </tr>
+                          
+                        ))
+                      }
+                        <tr>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                )
                 
-                </Box>
-                ))
+                
               }
             </Box>
           </Grid>
@@ -110,6 +116,11 @@ function Cart() {
                 <Button
                   variant='contained'
                   color='secondary'
+                  sx={{ 
+                    '&:hover' : {
+                      backgroundColor : '#ffeb3b'
+                    }
+                  }}
                 >
                   Check Out
                 </Button>

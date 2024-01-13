@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect , useState} from 'react';
 //library
 import { Box , Typography, Grid } from '@mui/material'
 import { useParams } from 'react-router-dom';
@@ -11,13 +11,29 @@ function RelatedProducts({ category }) {
 
   const { id } = useParams();
 
+  const [pdata , setPdata] = useState([]);
+
+  useEffect(() => {
+    async function fetchData(){
+      try {
+        const res = await fetch('http://localhost:3004/products');
+        const data = await res.json();
+        console.log(data);
+        setPdata(data);
+      } catch (error) {
+        alert('unable to fetch data');
+      }
+    }
+    fetchData();
+  },[])
+
   return (
     <Box mt={5}>
       <Typography variant='h4'>Related Products</Typography>
       <Box>
         <Grid container>
-          {products.map((item) => {
-            if(item.category === category && item.id !== id ){
+          {pdata.map((item) => {
+            if(item.category === category){
               return(
                 <Grid item xs={12} sm={4} md={4} key={item.id}>
                   <ProductsCard 
