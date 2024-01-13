@@ -27,6 +27,7 @@ const addCart = expressAsyncHandler(async(req,res) => {
     
     // Check if the product already exists in the cart
     const existingItem = userCart.items.find((item) => item.productId === productId);
+    // console.log(existingItem);
 
     if(existingItem){
       // If the product exists, update the quantity
@@ -67,25 +68,36 @@ const addCart = expressAsyncHandler(async(req,res) => {
  * @access private
 */
 const removeCartItem = expressAsyncHandler(async(req,res) => {
-  const productId = req.params.id;
+
+  const productId = parseInt(req.params.id, 10);
   
   const userCart = await Cart.findOne({ user : req.user._id});
+  console.log(userCart)
 
   if(userCart){
     
     // Check if the product already exists in the cart
-    const existingItem = userCart.items.find((item) => item.productId === productId);
+    const existingItem = userCart.items.find((items) => items.productId === productId);
 
-    if(existingItem){
+    // console.log(existingItem);
+
+    if(existingItem.quantity > 1){
       // If the product exists, update the quantity
       existingItem.quantity -= 1;
-    }else{
+
+      // Save the changes to the cart
+      await userCart.save();
+
+      return res.status(200).json("GOAT")
+    }
+    // if quantity is 1 so we cannot have item in cart with quantity "0"
+    else if(existingItem.quantity === 1){
+      return res.status(200).json("Quantity cannot be change")
+    }
+    else{
       // if product is not present
       return res.status(404).json("No item")
     }
-    await userCart.save();
-    
-    return res.status(200).json("Array added")
   }else{
     
     return res.status(200).json("NO CART")
@@ -98,10 +110,38 @@ const removeCartItem = expressAsyncHandler(async(req,res) => {
  * @description Delete Cart item
  * @route DELETE /api/cart
  * @access private
- */
+*/
+const deleteCartItem = expressAsyncHandler(async(req,res) => {
+
+  const itemIdToRemove = req.params.id;
+  const userCart = await Cart.findOne({ user : req.user._id});
+
+  if(userCart){
+    // Find the index of the item with the specified _id
+    const itemIndex = userCart.items.findIndex((item) => item._id === itemIdToRemove);
+    console.log(itemIndex)
+
+    if(itemIndex){
+      // If the item with the specified _id is found, remove it from the array
+      userCart.items.splice(itemIndex, 1);
+
+      // Save the changes to the cart
+      await userCart.save();
+
+      return res.status(200).json("Item removed");
+    }else{
+      // If item with the specified _id is not found
+      return res.status(404).json("Item not found");
+    }
+
+  }else {
+    return res.status(404).json("No cart");
+  }
+})
 
 export {
   addCart,
   getCart,
-  removeCartItem
+  removeCartItem,
+  deleteCartItem
 }
