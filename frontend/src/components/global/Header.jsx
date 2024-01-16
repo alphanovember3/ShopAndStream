@@ -60,7 +60,7 @@ function Header(props) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        Ecommer
+        Ecoiner
       </Typography>
       <Divider />
       <List>
@@ -95,7 +95,7 @@ function Header(props) {
             to='/'
             sx={{ flexGrow: 1, display: { sm: 'block' } , textDecoration : 'none', color : 'black' }}
           >
-            Ecommer
+            Ecoiner
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {

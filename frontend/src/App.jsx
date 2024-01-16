@@ -10,6 +10,8 @@ import Register from './Pages/Register';
 import Login from './Pages/Login';
 import UserProfile from './Pages/UserProfile';
 import Cart from './Pages/Cart';
+import PaymentSuccess from './Pages/PaymentSuccess';
+import PaymentFailure from './Pages/PaymentFailure';
 
 import ProtectedRoutes from './components/global/ProtectedRoutes';
 
@@ -55,6 +57,9 @@ function App() {
         />
 
         <Route path='/product/:id' element={<ProductDetails />} />
+
+        <Route path='/success' element={<PaymentSuccess /> } />
+        <Route path='/failure' element={<PaymentFailure /> } />
       </Routes>
     </div>
   )

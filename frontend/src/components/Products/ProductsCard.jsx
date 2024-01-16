@@ -39,7 +39,7 @@ function ProductsCard({ id , name , image , price, category }) {
           {name}
         </Typography>
         <Typography variant="h6" >
-          ${price}
+        <i class="fa fa-inr"></i> {price}
         </Typography>
       </CardContent>
       <CardActions>

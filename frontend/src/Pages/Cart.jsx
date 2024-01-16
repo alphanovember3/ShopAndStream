@@ -1,4 +1,4 @@
-import React from 'react';
+import React , { useEffect }from 'react';
 import {
   Box, 
   Typography,
@@ -9,21 +9,58 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector , useDispatch } from 'react-redux';
-import { increaseCount , decreaseCount , removeFromCart  } from '../slices/cart/cartSlice';
+import { increaseCount , decreaseCount , removeFromCart , deleteCart } from '../slices/cart/cartSlice';
+import { useUserProfileMutation } from '../slices/auth/userApiSlice';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Link } from 'react-router-dom'
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  "pk_test_51OXLhdSE2hrDrRza8fDevxSKyRPWFT62VmG4UAtgk5ZzxdPRwXMVBUVQQHKvjJdg8pRvdruuGpCtAujph3rbwtzj000yxjPOsZ"
+);
 
 function Cart() {
   
   const dispatch = useDispatch();
   const {cart} = useSelector((state) => state.cart);
+  const { userInfo } = useSelector((state) => state.auth);
   console.log(cart)
   
   const totalPrice = cart.reduce((total, cart) => {
     return total + cart.quantity * cart.price;
   }, 0);
-  
+
+  const makePayment = async() => {
+    const stripe = await stripePromise;
+    
+    const requestBody = {
+      userName : userInfo.name,
+      email: userInfo.email,
+      products : cart.map(({ id, quantity , price, name }) => ({
+        id,
+        name,
+        price,
+        quantity
+      })),
+    };
+
+    const response = await fetch('http://localhost:5001/api/checkout/create-payment-inten', {
+      method : 'POST',
+      headers : { "Content-Type" : 'application/json'},
+      body : JSON.stringify(requestBody)
+    })
+
+    // console.log(response.json());
+    const session = await response.json();
+    console.log(session)
+    await stripe.redirectToCheckout({
+      sessionId: session.id,
+    });
+
+    // dispatch(deleteCart());
+  }
+
 
   return (
     <Box>
@@ -64,8 +101,8 @@ function Cart() {
                         cart.map((item) => (
                           <tr key={item.id}>
                             <td><img src={item.image} alt="imgwq" className='w-40'/></td>
-                            <td><h1>{item.name}</h1></td>
-                            <td><h1>{item.price}</h1></td>
+                            <td><h1 className='text-xl text-slate-900'>{item.name}</h1></td>
+                            <td><h1 className='text-xl text-green-600'>${item.price}</h1></td>
                             <td>
                               <IconButton 
                                 variant='contained' 
@@ -97,6 +134,17 @@ function Cart() {
                         </tr>
                       </tbody>
                     </table>
+ 
+                    <div className='my-3'>
+                    <h1>Continue Shopping</h1>
+                    <Link to={"/"}>
+                      <button 
+                        className=' my-3 btn bg-yellow-400 text-black hover:bg-yellow-300 border-yellow-400'
+                      >
+                        Shop Now
+                      </button>
+                    </Link>
+                    </div>
                   </div>
                   
                 )
@@ -121,10 +169,12 @@ function Cart() {
                       backgroundColor : '#ffeb3b'
                     }
                   }}
+                  onClick={makePayment}
                 >
                   Check Out
                 </Button>
               </FormControl>
+              <div id="card-element"></div>
             </Box>
 
           </Box>
@@ -133,7 +183,7 @@ function Cart() {
           
         
       </Box>
-      <Box></Box>
+      
     </Box>
   )
 }
