@@ -1,4 +1,7 @@
 import Cart from '../models/Cart.js';
+import PurchaseHistory from '../models/PurchaseHistory.js';
+import Reward from '../models/Reward.js';
+
 import expressAsyncHandler from "express-async-handler";
 
 import Stripe from 'stripe';
@@ -8,30 +11,17 @@ const stripe = new Stripe('sk_test_51OXLhdSE2hrDrRzawttAqlSSAHoOqdPtMkMAy9jGBREP
  * @description make paymrnt using stripe
  * @route POST /api/checkout
  * @access private
- */
-
-// const checkOut = expressAsyncHandler(async(req,res) => {
-
-//   const { amount } = req.body;
-
-//   try {
-//     const paymentIntent = await stripe.paymentIntents.create({
-//       amount: amount * 100, // Convert to cents
-//       currency: 'usd',
-//     });
-
-//     res.status(200).json({ client_secret: paymentIntent.client_secret });
-//   }catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Failed to create payment intent' });
-//   }
-// })
-
+*/
 const checkOut = expressAsyncHandler(async(req,res) => {
-  const { products , email, userName  } = req.body;
+
+  const { products , email, userName, userId, totalPrice  } = req.body;
+
+  const userExists = await Reward.findOne({ user : userId});
+  console.log(userExists);
+  console.log(totalPrice);
 
   try {
-      //retriving items from cart:
+    //retriving items from cart:
     const lineItems = await Promise.all(
       products.map(async(product) => {
         return {
@@ -46,9 +36,6 @@ const checkOut = expressAsyncHandler(async(req,res) => {
         }
       })
     );
-    
-
-    // console.log(lineItems);
 
     // creating stripe sesssion 
     const session = await stripe.checkout.sessions.create({
@@ -60,7 +47,18 @@ const checkOut = expressAsyncHandler(async(req,res) => {
       success_url: 'http://localhost:5173/success',
       cancel_url: 'http://localhost:5173/failure',
     });
-
+    
+    if(session.id){
+      if(userExists){
+        if(totalPrice > 500){
+          userExists.reward += 40;
+          await userExists.save();
+        }else {
+          userExists.reward += 20;
+          await userExists.save();
+        }
+      }
+    }
     // console.log(session.id)
     res.status(200).json( { id : session.id } )
     // return { id: session.id };
@@ -69,9 +67,7 @@ const checkOut = expressAsyncHandler(async(req,res) => {
   } catch (error) {
     res.send(error)
   }
-  
-
-})
+});
 
 
 export {

@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector , useDispatch } from 'react-redux';
 import { increaseCount , decreaseCount , removeFromCart , deleteCart } from '../slices/cart/cartSlice';
 import { useUserProfileMutation } from '../slices/auth/userApiSlice';
+import { useCheckoutMutation } from '../slices/checkout/checkoutApiSlice';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Link } from 'react-router-dom'
@@ -25,6 +26,8 @@ function Cart() {
   const dispatch = useDispatch();
   const {cart} = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
+
+  const [ checkoutpost , { isLoading }] = useCheckoutMutation();
   console.log(cart)
   
   const totalPrice = cart.reduce((total, cart) => {
@@ -36,7 +39,9 @@ function Cart() {
     
     const requestBody = {
       userName : userInfo.name,
+      userId: userInfo._id,
       email: userInfo.email,
+      totalPrice : totalPrice,
       products : cart.map(({ id, quantity , price, name }) => ({
         id,
         name,
@@ -45,13 +50,17 @@ function Cart() {
       })),
     };
 
+    console.log(userInfo._id)
+
     const response = await fetch('http://localhost:5001/api/checkout/create-payment-inten', {
       method : 'POST',
-      headers : { "Content-Type" : 'application/json'},
+      headers : { _id : userInfo._id, "Content-Type" : 'application/json',  },
       body : JSON.stringify(requestBody)
     })
 
-    // console.log(response.json());
+    // const response = await checkoutpost(requestBody)
+
+    console.log(response);
     const session = await response.json();
     console.log(session)
     await stripe.redirectToCheckout({
