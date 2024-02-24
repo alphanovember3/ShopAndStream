@@ -5,6 +5,7 @@ import {
   Button,
   useMediaQuery
 } from '@mui/material'
+import LiveTvIcon from '@mui/icons-material/LiveTv';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -47,9 +48,13 @@ function Hero() {
           variant='contained' 
           color='secondary' 
           size='large'
-          onClick={checkUser}
+          onClick={() => {
+            // navigate( '/ott' , { replace : true })
+            window.open('/ott' , '_blank');
+          }}
+          startIcon={<LiveTvIcon />}
         >
-          Shop Now
+          Stream Movie
         </Button>
       </Box>
     </Box>

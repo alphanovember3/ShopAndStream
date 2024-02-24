@@ -22,7 +22,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLogoutMutation } from "../../slices/auth/userApiSlice";
 import { deleteCart  } from '../../slices/cart/cartSlice';
 import { logout } from "../../slices/auth/authSlice";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -57,10 +57,14 @@ function Header(props) {
     navigate('/profile')
   }
 
+  const location = useLocation();
+  // Check if the current route is the one that redirects to OTT movies
+  const isOttMoviesRoute = location.pathname === '/ott';
+
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        Ecoiner
+        {isOttMoviesRoute ? 'Netli' : 'Ecoiner' } 
       </Typography>
       <Divider />
       <List>
@@ -78,7 +82,7 @@ function Header(props) {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar component="nav" color='background' elevation={0}>
+      <AppBar component="nav" color={ isOttMoviesRoute ?  'transparent' : 'background' } elevation={0}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -93,34 +97,44 @@ function Header(props) {
             variant="h6"
             component={Link}
             to='/'
-            sx={{ flexGrow: 1, display: { sm: 'block' } , textDecoration : 'none', color : 'black' }}
+            sx={{ flexGrow: 1, display: { sm: 'block' } , textDecoration : 'none' }}
+            color={ isOttMoviesRoute ? 'red' : 'black'}
           >
-            Ecoiner
+            {isOttMoviesRoute ? 'Netli' : 'Ecoiner' }
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {
               userInfo ? (
                 <>
-                  <Button sx={{ color : 'black'}} onClick={visitProfile}>{userInfo.name}</Button>
+                  <Button sx={ isOttMoviesRoute ? {color : 'white'} : { color : 'black'}} onClick={visitProfile}>{userInfo.name}</Button>
                   <Button variant='contained' onClick={logoutHandler} color='error'>Logout</Button>
-                  <Badge
-                    badgeContent={cart.length}
-                    color='secondary'
-                    invisible = { cart.length === 0}
-                    sx={{
-                        "& .MuiBadge-badge" : {
-                            right : 5,
-                            top : 5,
-                            padding : "0 , 4px",
-                            height : "14px",
-                            minWidth : "13px"
-                        }
-                    }}
-                  >  
-                    <IconButton variant='contained' sx={{ mx : 0.5}} onClick={() => { navigate('/cart')}}>
-                      <ShoppingCartIcon  sx={{ color : 'black'}}/>
-                    </IconButton>
-                  </Badge>
+
+                  {
+                    isOttMoviesRoute ? 
+                    (
+                      null
+                    ) : (
+                      <Badge
+                        badgeContent={cart.length}
+                        color='secondary'
+                        invisible = { cart.length === 0}
+                        sx={{
+                            "& .MuiBadge-badge" : {
+                                right : 5,
+                                top : 5,
+                                padding : "0 , 4px",
+                                height : "14px",
+                                minWidth : "13px"
+                            }
+                        }}
+                      > 
+                        <IconButton variant='contained' sx={{ mx : 0.5}} onClick={() => { navigate('/cart')}}>
+                          <ShoppingCartIcon  sx={{ color : 'black'}}/>
+                        </IconButton>
+                      </Badge>
+                    )
+                  }
+                  
                 </>
                 
               ) : (

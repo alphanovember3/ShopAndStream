@@ -20,7 +20,7 @@ function ProductsCard({ id , name , image , price, category }) {
 
   const checkUser = async() => {
     if(userInfo){
-      dispatch(addToCart({ id : id , name , image , price , quantity : 1}))
+      dispatch(addToCart({ id : id , name , image , price , quantity : 1, category}))
       // navigate('/cart')
     } else {
       navigate('/login')

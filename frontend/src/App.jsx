@@ -17,6 +17,7 @@ import ProtectedRoutes from './components/global/ProtectedRoutes';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import OttMoviePage from './Pages/OttMoviePage';
 
 // Scrolltop compoenent 
 const ScrollToTop = () => {
@@ -60,6 +61,8 @@ function App() {
 
         <Route path='/success' element={<PaymentSuccess /> } />
         <Route path='/failure' element={<PaymentFailure /> } />
+
+        <Route path='/ott' element={<OttMoviePage />}/>
       </Routes>
     </div>
   )

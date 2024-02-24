@@ -50,10 +50,14 @@ const checkOut = expressAsyncHandler(async(req,res) => {
     
     if(session.id){
       if(userExists){
-        if(totalPrice > 500){
+        if(totalPrice > 500 && products.category === 'electronic'){
           userExists.reward += 40;
           await userExists.save();
-        }else {
+        }else if(totalPrice > 600 && products.category === 'clothing'){
+          userExists.reward += 60;
+          await userExists.save();
+        }
+        else {
           userExists.reward += 20;
           await userExists.save();
         }
