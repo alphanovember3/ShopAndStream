@@ -21,8 +21,26 @@ const addReward = expressAsyncHandler(async(req,res) => {
   }
   
 
+});
+
+const redemeReward = expressAsyncHandler(async(req,res) => {
+
+  const { userId } = req.body;
+
+  const userExists = await Reward.findOne({ user : userId});
+
+  if(userExists){
+    userExists.reward -= 100;
+    await userExists.save();
+    return res.status(200).json({
+       message : 'Reward is Claimed!'
+    });
+  }else {
+    return res.status(400).json({ message : 'user not found'})
+  }
+
 })
 
 export {
-  addReward
+  addReward, redemeReward
 }

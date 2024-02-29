@@ -46,7 +46,8 @@ function Cart() {
         id,
         name,
         price,
-        quantity
+        quantity,
+        category
       })),
     };
 

@@ -50,6 +50,7 @@ function Hero() {
           size='large'
           onClick={() => {
             // navigate( '/ott' , { replace : true })
+            console.log(window)
             window.open('/ott' , '_blank');
           }}
           startIcon={<LiveTvIcon />}

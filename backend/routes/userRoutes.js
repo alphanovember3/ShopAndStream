@@ -3,7 +3,7 @@ import {
   authUser , registerUser , logoutUser , getUserProfile , updateUserProfile 
 } from '../controller/userController.js';
 import {
-  addReward
+  addReward,redemeReward
 } from '../controller/rewardController.js'
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -15,5 +15,6 @@ router.post('/logout', logoutUser);
 router.get('/profile', protect , getUserProfile);
 router.put('/profile', protect , updateUserProfile);
 router.post('/addreward', protect ,addReward);
+router.post('/redeme' , redemeReward );
 
 export default router;

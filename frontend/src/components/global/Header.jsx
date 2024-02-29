@@ -23,11 +23,12 @@ import { useLogoutMutation } from "../../slices/auth/userApiSlice";
 import { deleteCart  } from '../../slices/cart/cartSlice';
 import { logout } from "../../slices/auth/authSlice";
 import { useNavigate , useLocation } from 'react-router-dom';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
 
 const drawerWidth = 240;
 
 function Header(props) {
-  const { window } = props;
+  const { windowPanel } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
@@ -59,7 +60,7 @@ function Header(props) {
 
   const location = useLocation();
   // Check if the current route is the one that redirects to OTT movies
-  const isOttMoviesRoute = location.pathname === '/ott';
+  const isOttMoviesRoute = location.pathname === '/ott' ;
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
@@ -77,7 +78,7 @@ function Header(props) {
     </Box>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container = windowPanel !== undefined ? () => windowPanel().document.body : undefined;
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -94,10 +95,10 @@ function Header(props) {
             <MenuIcon />
           </IconButton>
           <Typography
-            variant="h6"
+            variant="h5"
             component={Link}
             to='/'
-            sx={{ flexGrow: 1, display: { sm: 'block' } , textDecoration : 'none' }}
+            sx={{ flexGrow: 1, display: { sm: 'block' } , textDecoration : 'none' , fontWeight : 'bold'}}
             color={ isOttMoviesRoute ? 'red' : 'black'}
           >
             {isOttMoviesRoute ? 'Netli' : 'Ecoiner' }
@@ -106,6 +107,23 @@ function Header(props) {
             {
               userInfo ? (
                 <>
+                  { isOttMoviesRoute ? (
+                    null
+                  ) : (
+                    <Button 
+                      variant='contained' 
+                      color='secondary' 
+                      size='large'
+                      onClick={() => {
+                        // navigate( '/ott' , { replace : true })
+                        window.open('/ott' , '_blank');
+                        console.log("he");
+                      }}
+                      startIcon={<LiveTvIcon />}
+                    >
+                      Stream Movie
+                    </Button>
+                  )}
                   <Button sx={ isOttMoviesRoute ? {color : 'white'} : { color : 'black'}} onClick={visitProfile}>{userInfo.name}</Button>
                   <Button variant='contained' onClick={logoutHandler} color='error'>Logout</Button>
 
