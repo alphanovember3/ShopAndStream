@@ -66,9 +66,17 @@ function App() {
         <Route path='/success' element={<PaymentSuccess /> } />
         <Route path='/failure' element={<PaymentFailure /> } />
 
-        <Route path='/ott' element={<OttMoviePage />}/>
+        <Route path='/ott' element={
+          <ProtectedRoutes>
+            <OttMoviePage />
+          </ProtectedRoutes>
+        }/>
 
-        <Route path='/ott/:id' element={<MovieDetailPage />}/>
+        <Route path='/ott/:id' element={
+          <ProtectedRoutes>
+            <MovieDetailPage />
+          </ProtectedRoutes>
+          }/>
       </Routes>
     </div>
   )

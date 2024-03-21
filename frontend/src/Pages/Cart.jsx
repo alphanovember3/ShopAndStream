@@ -42,10 +42,11 @@ function Cart() {
       userId: userInfo._id,
       email: userInfo.email,
       totalPrice : totalPrice,
-      products : cart.map(({ id, quantity , price, name }) => ({
+      products : cart.map(({ id, quantity , price,cost, name, category }) => ({
         id,
         name,
         price,
+        cost,
         quantity,
         category
       })),
@@ -146,7 +147,7 @@ function Cart() {
                     </table>
  
                     <div className='my-3'>
-                    <h1>Continue Shopping</h1>
+                    <h1 className='text-xl'>Continue Shopping</h1>
                     <Link to={"/"}>
                       <button 
                         className=' my-3 btn bg-yellow-400 text-black hover:bg-yellow-300 border-yellow-400'
