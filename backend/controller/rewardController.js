@@ -25,14 +25,32 @@ const redemeReward = expressAsyncHandler(async (req, res) => {
   const userExists = await Reward.findOne({ user: userId });
 
   if (userExists) {
-    userExists.reward -= 200;
-    await userExists.save();
-    return res.status(200).json({
-      message: "Reward is Claimed!",
-    });
+    if (userExists.reward < 200) {
+      res.status(400);
+      console.log(userExists.reward < 200);
+      throw new Error("No Sufficent Reward Coins");
+    } else {
+      userExists.reward -= 200;
+      await userExists.save();
+      return res.status(200).json({
+        message: "Reward is Claimed!",
+      });
+    }
   } else {
     return res.status(400).json({ message: "user not found" });
   }
 });
 
-export { addReward, redemeReward };
+const getRewardCount = expressAsyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const userExists = await Reward.findOne({ user: userId });
+
+  if (userExists) {
+    // console.log(typeof userExists.reward);
+    return res.status(200).json({
+      reward: userExists.reward,
+    });
+  }
+});
+
+export { addReward, redemeReward, getRewardCount };

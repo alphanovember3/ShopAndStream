@@ -3,6 +3,7 @@ import axios from "axios";
 import MovieCard from "../components/Movie/MovieCard";
 import Youtube from "react-youtube";
 import Modal from "react-modal";
+import { toast } from "react-toastify";
 
 import { useSelector, useDispatch } from "react-redux";
 
@@ -26,18 +27,31 @@ const OttMoviePage = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const redemCoins = async () => {
-    const requestBody = {
-      userId: userInfo._id,
-    };
+    try {
+      const requestBody = {
+        userId: userInfo._id,
+      };
 
-    const response = await fetch("http://localhost:5001/api/users/redeme", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    });
+      const response = await fetch("http://localhost:5001/api/users/redeme", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
 
-    const res = await response.json();
-    console.log(res);
+      const res = await response.json();
+
+      if (res.message === "No Sufficent Reward Coins") {
+        // toast.error("No Balance");
+        return false;
+      } else {
+        console.log(res);
+
+        return true;
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || error.error);
+      console.log(error);
+    }
   };
 
   const openModal = () => {
@@ -164,15 +178,22 @@ const OttMoviePage = () => {
                     {trailer ? (
                       <button
                         className={"button play-video"}
-                        onClick={() => {
-                          openModal();
-                          setPlaying(true);
+                        onClick={async () => {
                           // after user played the video then
                           // specific amount of coins will be debited from the user
                           // for this use post method:
                           // that send two parameters : number of coin and userId
                           // number of coins for now is default 200:
-                          redemCoins();
+                          const result = await redemCoins();
+                          console.log(result);
+
+                          if (result) {
+                            // after redeme the video will play
+                            openModal();
+                            setPlaying(true);
+                          } else {
+                            toast.error("No Reward Points");
+                          }
                         }}
                         type="button"
                       >

@@ -28,7 +28,7 @@ const checkOut = expressAsyncHandler(async (req, res) => {
       products.map(async (product) => {
         return {
           price_data: {
-            currency: "usd",
+            currency: "inr",
             product_data: {
               name: product.name,
             },
@@ -43,6 +43,9 @@ const checkOut = expressAsyncHandler(async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       // "billing_address_collection": "XXXXX",
+      shipping_address_collection: {
+        allowed_countries: ["IN"],
+      },
       line_items: lineItems,
       customer_email: email,
       mode: "payment",
@@ -56,17 +59,21 @@ const checkOut = expressAsyncHandler(async (req, res) => {
           const reward = calculateRewardRate(products);
           userExists.reward += reward + 20;
           await userExists.save();
+          console.log("first");
         } else if (totalPrice > 3000 && totalPrice <= 9999) {
           const reward = calculateRewardRate(products);
           userExists.reward += reward + 50;
           await userExists.save();
+          console.log("second");
         } else if (totalPrice >= 10000) {
           const reward = calculateRewardRate(products);
-          userExists.reward += reward + 50;
+          userExists.reward += reward + 80;
           await userExists.save();
+          console.log("third");
         } else {
-          userExists.reward += reward + 10;
+          userExists.reward += 10;
           await userExists.save();
+          console.log("else run");
         }
       }
     }
